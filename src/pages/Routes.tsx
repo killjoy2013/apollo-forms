@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Routes = () => {
-  const classes = useStyles();
+  const classes = useStyles({});
   return (
     <Router history={history}>
       <div>

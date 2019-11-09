@@ -1,0 +1,9 @@
+type Car {
+  brand: String
+  model: String
+  year: Int
+  fastEnough: Boolean!
+}
+type Query {
+  carForm: Car
+}

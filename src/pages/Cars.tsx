@@ -15,6 +15,9 @@ import {
   FormControl
 } from "@material-ui/core";
 import DisplayFormikState from "./DisplayFormikState";
+import { Car, useCarFormQuery } from "../graphql/types";
+import { useApolloClient } from "@apollo/react-hooks";
+import { Queries } from "../schema";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,16 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type Car = {
-  brand: string;
-  model: string;
-  year: number;
-  fastEnough: boolean;
-};
-
 const CarForm = () => {
-  const classes = useStyles();
+  const classes = useStyles({});
   const formik = useFormikContext<Car>();
+
   return (
     <form>
       <Grid container direction="column" justify="center" alignItems="center">
@@ -118,14 +115,15 @@ const CarForm = () => {
 interface ICars {}
 
 const Cars: React.FunctionComponent<ICars> = (props: ICars) => {
+  const {
+    data: {
+      carForm: { __typename, ...noTypename }
+    }
+  } = useCarFormQuery();
+
   return (
     <Formik
-      initialValues={{
-        brand: "",
-        model: "",
-        year: "",
-        fastEnough: false
-      }}
+      initialValues={noTypename}
       onSubmit={() => alert("Nowhere to persist :-(")}
     >
       <CarForm />

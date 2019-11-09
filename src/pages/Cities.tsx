@@ -29,7 +29,7 @@ type City = {
 };
 
 const CityForm = () => {
-  const classes = useStyles();
+  const classes = useStyles({});
   const formik = useFormikContext<City>();
 
   return (
