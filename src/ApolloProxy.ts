@@ -1,7 +1,7 @@
 import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { resolvers } from "./resolvers";
-import { Car } from "./graphql/types";
+import { Car, CarFormQuery } from "./graphql/types";
 
 let dell = resolvers;
 
@@ -13,13 +13,13 @@ export const getClient = () => {
     resolvers
   });
 
-  cache.writeData({
+  cache.writeData<CarFormQuery>({
     data: {
       carForm: {
         __typename: "Car",
         brand: "",
         model: "",
-        year: "",
+        year: null,
         fastEnough: false
       }
     }

@@ -15,7 +15,11 @@ import {
   FormControl
 } from "@material-ui/core";
 import DisplayFormikState from "./DisplayFormikState";
-import { Car, useCarFormQuery } from "../graphql/types";
+import {
+  Car,
+  useCarFormQuery,
+  usePersistCarFormMutation
+} from "../graphql/types";
 import { useApolloClient } from "@apollo/react-hooks";
 import { Queries } from "../schema";
 
@@ -37,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const CarForm = () => {
   const classes = useStyles({});
   const formik = useFormikContext<Car>();
+  const [persistCarForm] = usePersistCarFormMutation();
 
   return (
     <form>
@@ -102,7 +107,13 @@ const CarForm = () => {
           variant="contained"
           color="primary"
           className={classes.button}
-          onClick={() => formik.submitForm()}
+          onClick={() =>
+            persistCarForm({
+              variables: {
+                args: formik.values
+              }
+            })
+          }
         >
           Persist Cars
         </Button>
@@ -122,10 +133,7 @@ const Cars: React.FunctionComponent<ICars> = (props: ICars) => {
   } = useCarFormQuery();
 
   return (
-    <Formik
-      initialValues={noTypename}
-      onSubmit={() => alert("Nowhere to persist :-(")}
-    >
+    <Formik initialValues={noTypename} onSubmit={() => {}}>
       <CarForm />
     </Formik>
   );

@@ -11,6 +11,16 @@ const QUERY_CARS = gql`
   }
 `;
 
+const PERSIST_CAR_FORM = gql`
+  mutation persistCarForm($args: CarFormInput!) {
+    persistCarForm(carFormInput: $args) @client
+  }
+`;
+
 export const Queries = {
   QUERY_CARS
+};
+
+export const Mutations = {
+  PERSIST_CAR_FORM
 };

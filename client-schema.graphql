@@ -4,6 +4,18 @@ type Car {
   year: Int
   fastEnough: Boolean!
 }
+
+input CarFormInput {
+  brand: String
+  model: String
+  year: Int
+  fastEnough: Boolean!
+}
+
 type Query {
   carForm: Car
+}
+
+type Mutation {
+  persistCarForm(carFormInput: CarFormInput!): String
 }
