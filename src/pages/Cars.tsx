@@ -38,9 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface CarFormProps {}
 
-const CarForm: React.FunctionComponent<CarFormProps> = (
-  props: CarFormProps
-) => {
+const CarForm = (props: CarFormProps) => {
   const classes = useStyles(props);
   const formik = useFormikContext<Car>();
 

@@ -1,5 +1,5 @@
 documents:
-  - ./src/schema.ts
+  - ./src/queries.ts
 overwrite: true
 generates:
   ./src/graphql/types.tsx:

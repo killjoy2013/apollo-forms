@@ -1,6 +1,6 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
-import { CarFormQuery } from "./graphql/types";
+import { CarFormQuery, CityFormQuery } from "./graphql/types";
 import { resolvers } from "./resolvers";
 
 export const getClient = () => {
@@ -19,6 +19,17 @@ export const getClient = () => {
         model: "",
         year: null,
         fastEnough: false
+      }
+    }
+  });
+
+  cache.writeData<CityFormQuery>({
+    data: {
+      cityForm: {
+        __typename: "City",
+        name: "",
+        country: "",
+        population: null
       }
     }
   });

@@ -9,6 +9,11 @@ import {
   createStyles
 } from "@material-ui/core";
 import DisplayFormikState from "./DisplayFormikState";
+import {
+  City,
+  useCityFormQuery,
+  usePersistCityFormMutation
+} from "../graphql/types";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,14 +27,9 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-type City = {
-  name: "";
-  country: "";
-  population: "";
-};
-
-const CityForm = () => {
-  const classes = useStyles({});
+interface CityFormProps {}
+const CityForm = (props: CityFormProps) => {
+  const classes = useStyles(props);
   const formik = useFormikContext<City>();
 
   return (
@@ -81,14 +81,23 @@ const CityForm = () => {
 interface ICities {}
 
 const Cities: React.FunctionComponent<ICities> = (props: ICities) => {
+  const {
+    data: {
+      cityForm: { __typename, ...noTypename }
+    }
+  } = useCityFormQuery();
+
+  const [persistCityForm] = usePersistCityFormMutation();
   return (
     <Formik
-      initialValues={{
-        brand: "",
-        model: "",
-        year: ""
-      }}
-      onSubmit={() => alert("Nowhere to persist :-(")}
+      initialValues={noTypename}
+      onSubmit={values =>
+        persistCityForm({
+          variables: {
+            args: values
+          }
+        })
+      }
     >
       <CityForm />
     </Formik>
