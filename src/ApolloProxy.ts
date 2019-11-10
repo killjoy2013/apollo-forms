@@ -1,9 +1,7 @@
-import { ApolloClient } from "apollo-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { ApolloClient } from "apollo-client";
+import { CarFormQuery } from "./graphql/types";
 import { resolvers } from "./resolvers";
-import { Car, CarFormQuery } from "./graphql/types";
-
-let dell = resolvers;
 
 export const getClient = () => {
   const cache = new InMemoryCache();

@@ -1,27 +1,25 @@
-import * as React from "react";
-import { Formik, useFormikContext } from "formik";
-import TextField from "@material-ui/core/TextField";
 import {
-  Grid,
   Button,
-  makeStyles,
-  Theme,
-  createStyles,
   Checkbox,
+  createStyles,
+  FormControl,
   FormControlLabel,
-  Select,
-  MenuItem,
+  Grid,
   InputLabel,
-  FormControl
+  makeStyles,
+  MenuItem,
+  Select,
+  Theme
 } from "@material-ui/core";
-import DisplayFormikState from "./DisplayFormikState";
+import TextField from "@material-ui/core/TextField";
+import { Formik, useFormikContext } from "formik";
+import * as React from "react";
 import {
   Car,
   useCarFormQuery,
   usePersistCarFormMutation
 } from "../graphql/types";
-import { useApolloClient } from "@apollo/react-hooks";
-import { Queries } from "../schema";
+import DisplayFormikState from "./DisplayFormikState";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -38,10 +36,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const CarForm = () => {
-  const classes = useStyles({});
+interface CarFormProps {}
+
+const CarForm: React.FunctionComponent<CarFormProps> = (
+  props: CarFormProps
+) => {
+  const classes = useStyles(props);
   const formik = useFormikContext<Car>();
-  const [persistCarForm] = usePersistCarFormMutation();
 
   return (
     <form>
@@ -107,13 +108,7 @@ const CarForm = () => {
           variant="contained"
           color="primary"
           className={classes.button}
-          onClick={() =>
-            persistCarForm({
-              variables: {
-                args: formik.values
-              }
-            })
-          }
+          onClick={() => formik.submitForm()}
         >
           Persist Cars
         </Button>
@@ -132,8 +127,19 @@ const Cars: React.FunctionComponent<ICars> = (props: ICars) => {
     }
   } = useCarFormQuery();
 
+  const [persistCarForm] = usePersistCarFormMutation();
+
   return (
-    <Formik initialValues={noTypename} onSubmit={() => {}}>
+    <Formik
+      initialValues={noTypename}
+      onSubmit={values => {
+        persistCarForm({
+          variables: {
+            args: values
+          }
+        });
+      }}
+    >
       <CarForm />
     </Formik>
   );
