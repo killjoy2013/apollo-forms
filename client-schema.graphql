@@ -1,7 +1,7 @@
 type Car {
   brand: String
   model: String
-  year: Int
+  year: String
   fastEnough: Boolean!
 }
 
@@ -14,7 +14,7 @@ type City {
 input CarFormInput {
   brand: String
   model: String
-  year: Int
+  year: String
   fastEnough: Boolean!
 }
 

@@ -9,8 +9,10 @@ import {
   makeStyles,
   MenuItem,
   Select,
-  Theme
+  Theme,
+  Typography
 } from "@material-ui/core";
+import clsx from "clsx";
 import TextField from "@material-ui/core/TextField";
 import { Formik, useFormikContext } from "formik";
 import * as React from "react";
@@ -32,6 +34,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     formControl: {
       width: 250
+    },
+    visible: {
+      visibility: "visible"
+    },
+    hidden: {
+      visibility: "hidden"
     }
   })
 );
@@ -41,6 +49,11 @@ interface CarFormProps {}
 const CarForm = (props: CarFormProps) => {
   const classes = useStyles(props);
   const formik = useFormikContext<Car>();
+
+  const submitCountClassName = clsx({
+    [classes.visible]: formik.submitCount > 0,
+    [classes.hidden]: formik.submitCount == 0
+  });
 
   return (
     <form>
@@ -80,12 +93,12 @@ const CarForm = (props: CarFormProps) => {
             }}
             labelWidth={30}
           >
-            <MenuItem value="">
+            <MenuItem value={""}>
               <em>None</em>
             </MenuItem>
-            <MenuItem value={2017}>2017</MenuItem>
-            <MenuItem value={2018}>2018</MenuItem>
-            <MenuItem value={2019}>2019</MenuItem>
+            <MenuItem value={"2017"}>2017</MenuItem>
+            <MenuItem value={"2018"}>2018</MenuItem>
+            <MenuItem value={"2019"}>2019</MenuItem>
           </Select>
         </FormControl>
         <FormControlLabel
@@ -110,6 +123,13 @@ const CarForm = (props: CarFormProps) => {
         >
           Persist Cars
         </Button>
+        <Typography
+          className={submitCountClassName}
+          variant="subtitle1"
+          color="textSecondary"
+        >
+          {`Car form is persisted ${formik.submitCount}. time`}
+        </Typography>
       </Grid>
       <DisplayFormikState {...formik.values} />
     </form>

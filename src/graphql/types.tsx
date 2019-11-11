@@ -19,14 +19,14 @@ export type Car = {
    __typename?: 'Car',
   brand?: Maybe<Scalars['String']>,
   model?: Maybe<Scalars['String']>,
-  year?: Maybe<Scalars['Int']>,
+  year?: Maybe<Scalars['String']>,
   fastEnough: Scalars['Boolean'],
 };
 
 export type CarFormInput = {
   brand?: Maybe<Scalars['String']>,
   model?: Maybe<Scalars['String']>,
-  year?: Maybe<Scalars['Int']>,
+  year?: Maybe<Scalars['String']>,
   fastEnough: Scalars['Boolean'],
 };
 
@@ -312,9 +312,9 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>,
   Car: ResolverTypeWrapper<Car>,
   String: ResolverTypeWrapper<Scalars['String']>,
-  Int: ResolverTypeWrapper<Scalars['Int']>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   City: ResolverTypeWrapper<City>,
+  Int: ResolverTypeWrapper<Scalars['Int']>,
   Mutation: ResolverTypeWrapper<{}>,
   CarFormInput: CarFormInput,
   CityFormInput: CityFormInput,
@@ -325,9 +325,9 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {},
   Car: Car,
   String: Scalars['String'],
-  Int: Scalars['Int'],
   Boolean: Scalars['Boolean'],
   City: City,
+  Int: Scalars['Int'],
   Mutation: {},
   CarFormInput: CarFormInput,
   CityFormInput: CityFormInput,
@@ -336,7 +336,7 @@ export type ResolversParentTypes = ResolversObject<{
 export type CarResolvers<ContextType = any, ParentType extends ResolversParentTypes['Car'] = ResolversParentTypes['Car']> = ResolversObject<{
   brand?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   model?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  year?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  year?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   fastEnough?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
 }>;
 

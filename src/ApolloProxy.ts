@@ -17,7 +17,7 @@ export const getClient = () => {
         __typename: "Car",
         brand: "",
         model: "",
-        year: null,
+        year: "",
         fastEnough: false
       }
     }
