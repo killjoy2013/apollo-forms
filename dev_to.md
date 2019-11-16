@@ -9,7 +9,7 @@ You can test the working [demo](https://codesandbox.io/embed/apollo-forms-2bomy?
 
 Lets start...  
 
-### Construct the project
+## **Construct the project**
 
 We're using Create React App like the vast majority of the react applications as a starter template ;
 
@@ -397,7 +397,7 @@ State management is one of the most important topics in React. A few years ago R
 Formik documentation indicates that the form state is ***ephemeral***. And it should stay so. We may think 'Ok we can update the React Context upon form submission, that's fine enough'. This is quite logical indeed. There are tons of documents on the web about using React Context. However, if we are using GraphQL we have another option; using Apollo Cache to keep the form state between routes...
 
 ## **GraphQL & Apollo Client & graphql-code-generator**
-GraphQL is an awesone technology that lets us write our backend in very neat and imparative way independent of the language. There are wonderful resources on the web to go into details of GraphQL.
+GraphQL is an awesome technology that lets us write our backend in very neat and imperative way independent of the language. There are wonderful resources on the web to go into details of GraphQL.
 
 Of course it's not only for backend. We develop our frontend applications making use of GraphQL query & mutation paradigm. Oftenly, frontend teams drive the transition toward GraphQL. [PayPal](https://medium.com/paypal-engineering/graphql-a-success-story-for-paypal-checkout-3482f724fb53) success story is a must read.
 
@@ -409,7 +409,9 @@ And graphql-code-generator
 
 `@graphql-codegen/add @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typescript-react-apollo @graphql-codegen/typescript-resolvers`
 
-Now GraphQL queries and mutations;
+Note: *tsconfig.json* file must have `"strictNullChecks": false`. Otherwise you'd receive compile time errors. 
+
+Now GraphQL queries and mutations. *graphql-code-generator* will go through this file to generate types;
 
 *src/queries.ts*
 ```jsx
@@ -500,7 +502,7 @@ type Mutation {
 }
 ```
 
-Our final file to add is to configure graphql-code-generator;
+We need to add the configuration file for graphql-code-generator;
 
 *codegen.yml*
 ```jsx
@@ -542,13 +544,12 @@ At this point we can run codegen to create *src/graphql/types.tsx*;
 
 `yarn run codegen`
 
-If you followed along so far, you're supposed to have *src/graphql/types.tsx*. You can check the file and the generated types.
+If you followed along so far, you're supposed to have *src/graphql/types.tsx*. You can check the file and its generated types.
 
 ## **Apollo Client & resolvers**
 
-Now we need to create Apollo Client and initialize Apollo Cache using *ApolloProxy.ts*;
+Now we need to create Apollo Client and initialize Apollo Cache using *src/ApolloProxy.ts*;
 
-*src/ApolloProxy.ts*
 ```jsx
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloClient } from "apollo-client";
@@ -660,7 +661,110 @@ export const resolvers: Resolvers = {
 };
 ```
 
-In this sample app, we have no graphql server. We'll only use Apollo Cache for our forms data. So, *ApolloProxy.ts* has no link to a backend. We're creating default form data, `carForm` & `cityForm`. Notice, we're using typescript generics with the generated types `CarFormQuery` & `CityFormQuery` in cache write operations. We're totally type safe here. For instance, try to change the name property of the cityForm to cityName. Typescript compiler immediately complains and warns you.  
+In this sample app, we have no graphql server. We'll only use Apollo Cache for our forms data. So, *ApolloProxy.ts* has no link to a backend. We're creating default form data in ApolloCache `carForm` & `cityForm`. Notice, we're using typescript generics with the generated types `CarFormQuery` & `CityFormQuery` in cache write operations. We're totally type safe here. For instance, try to change the name property of the cityForm to cityName. Typescript compiler immediately complains and warns you.  
 In *resolvers.ts*, we're using `Resolvers` and other generated types by *graphql-code-generator*. 
 
+Now we're updating *Cars.tsx* and *City.tsx* to make use of newly generated types and the *resolvers.ts* we've just created.
 
+
+*src/pages/Cars.tsx*
+
+```jsx
+const Cars: React.FunctionComponent<ICars> = (props: ICars) => {
+  const {
+    data: {
+      carForm: { __typename, ...noTypename }
+    }
+  } = useCarFormQuery();
+
+  const [persistCarForm] = usePersistCarFormMutation();
+
+  return (
+    <Formik
+      initialValues={noTypename}
+      onSubmit={values => {
+        persistCarForm({
+          variables: {
+            args: values
+          }
+        });
+      }}
+    >
+      <CarForm />
+    </Formik>
+  );
+};
+```
+
+*src/pages/Cities.tsx*
+```jsx
+const Cities: React.FunctionComponent<ICities> = (props: ICities) => {
+  const {
+    data: {
+      cityForm: { __typename, ...noTypename }
+    }
+  } = useCityFormQuery();
+
+  const [persistCityForm] = usePersistCityFormMutation();
+  return (
+    <Formik
+      initialValues={noTypename}
+      onSubmit={values =>
+        persistCityForm({
+          variables: {
+            args: values
+          }
+        })
+      }
+    >
+      <CityForm />
+    </Formik>
+  );
+};
+```
+
+We need to create and provide ApolloProvider, so that we can make use of `useQuery` and `useMutation` hooks in our pages. So, modify *index.tsx*;
+
+*src/index.tsx*
+```jsx
+import React from "react";
+import ReactDOM from "react-dom";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { getClient } from "./ApolloProxy";
+import "./index.css";
+import App from "./App";
+import * as serviceWorker from "./serviceWorker";
+
+const nodeserviceApolloClient = getClient();
+
+ReactDOM.render(
+  <ApolloProvider client={nodeserviceApolloClient}>
+    <App />
+  </ApolloProvider>,
+  document.getElementById("root")
+);
+serviceWorker.unregister();
+```
+
+Now you should be all set. Try `yarn start`
+
+## **Final words...**
+
+Although you can use `useQuery` and `useMutaion` hooks directly, I always prefer using the hooks generated by  *graphql-code-generator*. Because, if we use string based queries directly as below;
+
+ `const { data, error, loading } = useQuery<CarFormQuery>(Queries.QUERY_CAR);`
+
+ We wont be warned in compile time against incorrect changes in our `QUERY_CAR`. On the other hand, if we stick to using generated hooks as follows;
+
+   `const {
+    data: { carForm }
+  } = useCarFormQuery()`
+
+  any incorrect query string would lead to generation time error. And we'd be warned very early.
+
+
+  Hope you enjoy ;-)
+
+  Happy coding...
+
+@killjoy_tr
