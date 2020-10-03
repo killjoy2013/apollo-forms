@@ -11,11 +11,10 @@ import {
 } from "@material-ui/core";
 import DisplayFormikState from "./DisplayFormikState";
 import {
-  City,
-  useCityFormQuery,
-  usePersistCityFormMutation
+  City
 } from "../graphql/types";
 import clsx from "clsx";
+import {cityFormVar} from '../cache'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +40,7 @@ const CityForm = (props: CityFormProps) => {
   const formik = useFormikContext<City>();
   const submitCountClassName = clsx({
     [classes.visible]: formik.submitCount > 0,
-    [classes.hidden]: formik.submitCount == 0
+    [classes.hidden]: formik.submitCount === 0
   });
 
   return (
@@ -100,23 +99,13 @@ const CityForm = (props: CityFormProps) => {
 interface ICities {}
 
 const Cities: React.FunctionComponent<ICities> = (props: ICities) => {
-  const {
-    data: {
-      cityForm: { __typename, ...noTypename }
-    }
-  } = useCityFormQuery();
-
-  const [persistCityForm] = usePersistCityFormMutation();
+ 
   return (
     <Formik
-      initialValues={noTypename}
-      onSubmit={values =>
-        persistCityForm({
-          variables: {
-            args: values
-          }
-        })
-      }
+      initialValues={cityFormVar()}
+      onSubmit={values =>{
+        cityFormVar(values)
+      }}
     >
       <CityForm />
     </Formik>

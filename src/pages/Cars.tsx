@@ -17,11 +17,10 @@ import TextField from "@material-ui/core/TextField";
 import { Formik, useFormikContext } from "formik";
 import * as React from "react";
 import {
-  Car,
-  useCarFormQuery,
-  usePersistCarFormMutation
+  Car
 } from "../graphql/types";
 import DisplayFormikState from "./DisplayFormikState";
+import {carFormVar} from '../cache'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,7 +51,7 @@ const CarForm = (props: CarFormProps) => {
 
   const submitCountClassName = clsx({
     [classes.visible]: formik.submitCount > 0,
-    [classes.hidden]: formik.submitCount == 0
+    [classes.hidden]: formik.submitCount === 0
   });
 
   return (
@@ -138,24 +137,12 @@ const CarForm = (props: CarFormProps) => {
 
 interface ICars {}
 
-const Cars: React.FunctionComponent<ICars> = (props: ICars) => {
-  const {
-    data: {
-      carForm: { __typename, ...noTypename }
-    }
-  } = useCarFormQuery();
-
-  const [persistCarForm] = usePersistCarFormMutation();
-
+const Cars: React.FunctionComponent<ICars> = (props: ICars) => {  
   return (
     <Formik
-      initialValues={noTypename}
+      initialValues={carFormVar()}
       onSubmit={values => {
-        persistCarForm({
-          variables: {
-            args: values
-          }
-        });
+        carFormVar(values);
       }}
     >
       <CarForm />

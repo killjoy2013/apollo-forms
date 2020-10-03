@@ -1,8 +1,7 @@
 import * as React from "react";
 
 const DisplayFormikState = (formikProps: any) => (
-  <div style={{ margin: "1rem 0" }}>
-    <h3 style={{ fontFamily: "monospace" }} />
+  <div style={{ margin: "1rem 0" }}>    
     <pre
       style={{
         background: "#f6f8fa",
